@@ -1,0 +1,183 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#ifdef _WIN32
+    #define CLEAR_SCREEN "cls"
+#else
+    #define CLEAR_SCREEN "clear"
+#endif
+#define PAUSE_SCREEN printf("\nPressione ENTER para continuar..."); while (getchar() != '\n');
+
+typedef struct {
+    int id;
+    char pergunta[100];
+    char opcoes[4][100];
+    int resposta_correta;
+} Questao;
+
+#define MAX_QUESTOES 10
+
+Questao g_banco_questoes[MAX_QUESTOES];
+int g_num_questoes = 0;
+
+void exibir_menu_principal();
+
+void inicializar_banco() {
+
+    g_banco_questoes[0].id = 1;
+    strcpy(g_banco_questoes[0].pergunta, "Qual linguagem de programacao e conhecida como o 'pai' do C++?");
+    strcpy(g_banco_questoes[0].opcoes[0], "1) Java");
+    strcpy(g_banco_questoes[0].opcoes[1], "2) Python");
+    strcpy(g_banco_questoes[0].opcoes[2], "3) C");
+    strcpy(g_banco_questoes[0].opcoes[3], "4) Assembly");
+    g_banco_questoes[0].resposta_correta = 3;
+    g_num_questoes++;
+
+    g_banco_questoes[1].id = 2;
+    strcpy(g_banco_questoes[1].pergunta, "O que o comando 'sizeof()' retorna em C?");
+    strcpy(g_banco_questoes[1].opcoes[0], "1) O valor da variavel");
+    strcpy(g_banco_questoes[1].opcoes[1], "2) O tamanho em bytes");
+    strcpy(g_banco_questoes[1].opcoes[2], "3) O endereco de memoria");
+    strcpy(g_banco_questoes[1].opcoes[3], "4) O tipo de dado");
+    g_banco_questoes[1].resposta_correta = 2;
+    g_num_questoes++;
+    
+    g_banco_questoes[2].id = 3;
+    strcpy(g_banco_questoes[2].pergunta, "Qual é o operador logico 'E' em C?");
+    strcpy(g_banco_questoes[2].opcoes[0], "1) ||");
+    strcpy(g_banco_questoes[2].opcoes[1], "2) !");
+    strcpy(g_banco_questoes[2].opcoes[2], "3) &&");
+    strcpy(g_banco_questoes[2].opcoes[3], "4) ===");
+    g_banco_questoes[2].resposta_correta = 3;
+    g_num_questoes++;
+    
+    g_banco_questoes[3].id = 4;
+    strcpy(g_banco_questoes[3].pergunta, "O que o prefixo '#include' faz em um programa C?");
+    strcpy(g_banco_questoes[3].opcoes[0], "1) Declara uma nova variavel global.");
+    strcpy(g_banco_questoes[3].opcoes[1], "2) Inicia a execucao do programa.");
+    strcpy(g_banco_questoes[3].opcoes[2], "3) Insere o conteudo de outro arquivo no codigo.");
+    strcpy(g_banco_questoes[3].opcoes[3], "4) Aloca memoria dinamicamente.");
+    g_banco_questoes[3].resposta_correta = 3; 
+    g_num_questoes++;
+    
+    g_banco_questoes[4].id = 5;
+    strcpy(g_banco_questoes[4].pergunta, "Qual e o principal proposito dos ponteiros em linguagem C?");
+    strcpy(g_banco_questoes[4].opcoes[0], "1) Apenas armazenar valores inteiros.");
+    strcpy(g_banco_questoes[4].opcoes[1], "2) Acessar e manipular arquivos externos.");
+    strcpy(g_banco_questoes[4].opcoes[2], "3) Armazenar o endereco de memoria de outras variaveis.");
+    strcpy(g_banco_questoes[4].opcoes[3], "4) Definir o escopo de variaveis.");
+    g_banco_questoes[4].resposta_correta = 3; 
+    g_num_questoes++;
+}
+
+void iniciar_quiz() {
+    system(CLEAR_SCREEN);
+    printf("## INICIANDO QUIZ DE PROGRAMACAO ##\n");
+    printf("----------------------------------\n");
+
+    if (g_num_questoes == 0) {
+        printf("ERRO: Nenhuma questao cadastrada.\n");
+        PAUSE_SCREEN;
+        return;
+    }
+
+    int pontuacao = 0;
+    int resposta_usuario;
+
+    for (int i = 0; i < g_num_questoes; i++) {
+        Questao *q_atual = g_banco_questoes + i;
+
+        printf("\nQuestao %d/%d: %s\n", i + 1, g_num_questoes, q_atual->pergunta);
+
+        for (int j = 0; j < 4; j++) {
+            printf("  %s\n", q_atual->opcoes[j]);
+        }
+
+        printf("Sua resposta: ");
+        if (scanf("%d", &resposta_usuario) != 1 || resposta_usuario < 1 || resposta_usuario > 4) {
+            printf("\nOpcao invalida. Pulando para a proxima questao.\n");
+            while (getchar() != '\n');
+        } else {
+            while (getchar() != '\n');
+
+            if (resposta_usuario == q_atual->resposta_correta) {
+                printf("Correto!\n");
+                pontuacao++;
+            } else {
+                printf("Incorreto. A resposta correta era: %d.\n", q_atual->resposta_correta);
+            }
+        }
+    }
+
+    printf("\n==================================\n");
+    printf("QUIZ FINALIZADO!\n");
+    printf("Sua pontuacao final: %d de %d.\n", pontuacao, g_num_questoes);
+    printf("==================================\n");
+
+    PAUSE_SCREEN;
+}
+
+void exibir_menu_principal() {
+    int opcao = 0;
+
+    while (opcao != 3) {
+        system(CLEAR_SCREEN);
+        printf("****************************************\n");
+        printf("||                                    ||\n");
+        printf("||  [1] -> Iniciar Quiz de Programacao||\n");
+        printf("||  [2] -> Ver Total de Questoes      ||\n");
+        printf("||  [3] -> Sair do Sistema            ||\n");
+        printf("||                                    ||\n");
+        printf("****************************************\n");
+        printf(">> Escolha uma opcao: ");
+
+        if (scanf("%d", &opcao) != 1) {
+            opcao = 0;
+            while (getchar() != '\n'); 
+        } else {
+            while (getchar() != '\n');
+        }
+
+        switch (opcao) {
+            case 1:
+                iniciar_quiz();
+                break;
+            case 2:
+                system(CLEAR_SCREEN);
+                printf("Total de questoes cadastradas: %d\n", g_num_questoes);
+                PAUSE_SCREEN;
+                break;
+            case 3:
+                break;
+            default:
+                printf("\nOpcao invalida! Tente novamente.\n");
+                PAUSE_SCREEN;
+                break;
+        }
+    }
+}
+
+
+int main() {
+    inicializar_banco();
+
+    system(CLEAR_SCREEN);
+    printf("************************************************\n");
+    printf("*                                              *\n");
+    printf("*        Teste Seus Conhecimentos em C         *\n");
+    printf("*                                              *\n");
+    printf("************************************************\n");
+
+    PAUSE_SCREEN;
+
+    exibir_menu_principal();
+
+    system(CLEAR_SCREEN);
+    printf("================================================\n");
+    printf("||                                            ||\n");
+    printf("||                Quiz Encerrado.             ||\n");
+    printf("||                                            ||\n");
+    printf("================================================\n");
+    return 0;S
+}
